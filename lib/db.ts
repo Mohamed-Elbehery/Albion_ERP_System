@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 
-const DATABASE_URL = process.env.DATABASE_URL ?? "";
+const DATABASE_URL =
+  process.env.NODE_ENV === "development"
+    ? process.env.DATABASE_URL
+    : process.env.MONGODB_URI;
 
 if (!DATABASE_URL) {
   throw new Error(
@@ -26,7 +29,7 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(DATABASE_URL, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(DATABASE_URL ?? "", opts).then((mongoose) => {
       return mongoose;
     });
   }
