@@ -1,12 +1,14 @@
 import connectDB from "@/lib/db";
-import mongoose from "mongoose";
+import Item from "@/models/item";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     await connectDB();
 
-    const items = await mongoose.models.Item?.find({});
+    if(!Item) return;
+
+    const items = await Item?.find({});    
 
     let lowestPrices: any = [];
 

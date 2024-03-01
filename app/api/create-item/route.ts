@@ -1,5 +1,5 @@
 import connectDB from "@/lib/db";
-import mongoose from "mongoose";
+import Item from "@/models/item";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const item = await mongoose.models.Item.create({
+    const item = await Item.create({
       name,
       enchantment,
       tier,

@@ -14,10 +14,10 @@ export default function Resources() {
   const [query, setQuery] = useState("");
 
   const getAllItems = async () => {
-    const res = await fetch(process.env.NODE_ENV === "development" ? "http://localhost:3000/api/items" : "https://albion-erp-system.vercel.app/api/items", {
+    const res = await fetch("http://localhost:3000/api/items", {
       cache: "no-store",
     });
-    const data = await res.json();    
+    const data = await res.json();        
 
     setData(data);
   };

@@ -33,7 +33,7 @@ export default function AddResource() {
 
     const item = { ...resource, cities:itemCities };
 
-    const res = await fetch(process.env.NODE_ENV === "development" ? "http://localhost:3000/api/create-item" : "https://albion-erp-system.vercel.app/api/create-item", {
+    const res = await fetch("http://localhost:3000/api/create-item", {
       method: "POST",
       body: JSON.stringify(item),
       headers: {
