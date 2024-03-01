@@ -8,9 +8,11 @@ if (!DATABASE_URL) {
   );
 }
 
+//@ts-ignore
 let cached = global.mongoose;
 
 if (!cached) {
+  //@ts-ignore
   cached = global.mongoose = { conn: null, promise: null };
 }
 
