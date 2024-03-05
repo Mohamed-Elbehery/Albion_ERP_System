@@ -16,9 +16,12 @@ export default function Resources() {
   } | null>(null);
   const [query, setQuery] = useState("");
   const [quantity, setQuantity] = useState<number | null>(null);
+  const [tax, setTax] = useState<number | null>(null);
   const [calculate, setCalculate] = useState(false);
   const [itemCalculattion, setItemCalculattion] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const total = itemCalculattion * quantity!;
 
   const handleDelete = async (id: string) => {
     setIsLoading(true);
@@ -105,7 +108,9 @@ export default function Resources() {
                 Cancel
               </button>
               {quantity! > 0 && (
-                <p className="text-base">{itemCalculattion * quantity!}</p>
+                <p className="text-base">
+                  {(total * (tax! / 100)) + total}
+                </p>
               )}
               <input
                 className="text-sm rounded-md p-2 text-black"
@@ -114,6 +119,15 @@ export default function Resources() {
                 value={quantity!}
                 onChange={(e) =>
                   setQuantity(+e.target.value === 0 ? null : +e.target.value)
+                }
+              />
+              <input
+                className="text-sm rounded-md p-2 text-black"
+                placeholder="Tax..."
+                type="number"
+                value={tax!}
+                onChange={(e) =>
+                  setTax(+e.target.value === 0 ? null : +e.target.value)
                 }
               />
             </div>
