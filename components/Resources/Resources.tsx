@@ -29,8 +29,8 @@ export default function Resources() {
     );
 
     if (res.ok) {
-      toast.success("Deleted resource successfully");
       getAllItems();
+      toast.success("Deleted resource successfully");
     } else {
       toast.success("Failed to deleted resource");
     }
