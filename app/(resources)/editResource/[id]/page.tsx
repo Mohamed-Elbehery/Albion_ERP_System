@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/Loading/Loading";
 import { City, Item } from "@/types/item";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -28,9 +29,11 @@ export default function EditResource({
 }) {
   const [resource, setResource] = useState(DEFAULT_RESOURCE);
   const [cities, setCities] = useState(DEFAULT_CITIES);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const itemCities = Object.entries(cities).map(([name, price]) => ({
       name,
@@ -53,10 +56,11 @@ export default function EditResource({
     );
 
     if (res.ok) {
-      toast.success('Updated resource successfully')
-    } else {
-      toast.error('Failed to update resource')
+      toast.success("Updated resource successfully");
+      return setIsLoading(false);
     }
+    toast.error("Failed to update resource");
+    setIsLoading(false);
   };
 
   const handleChange = (e: React.FormEvent<HTMLInputElement> | any) => {
@@ -72,6 +76,8 @@ export default function EditResource({
 
   useEffect(() => {
     const getSignleItem = async () => {
+      setIsLoading(true);
+
       const res = await fetch(
         process.env.NODE_ENV === "development"
           ? `http://localhost:3000/api/get-item/${id}`
@@ -87,10 +93,13 @@ export default function EditResource({
 
       setResource(data as any);
       setCities(currentCities as any);
+      setIsLoading(false);
     };
 
     getSignleItem();
   }, [id]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <section className="flex items-center justify-center h-screen">

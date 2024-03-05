@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/Loading/Loading";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -23,9 +24,11 @@ const DEFAULT_CITIES = {
 export default function AddResource() {
   const [resource, setResource] = useState(DEFAULT_RESOURCE);
   const [cities, setCities] = useState(DEFAULT_CITIES);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const itemCities = Object.entries(cities).map(([name, price]) => ({
       name,
@@ -51,9 +54,10 @@ export default function AddResource() {
       setResource(() => DEFAULT_RESOURCE);
       setCities(() => DEFAULT_CITIES);
       toast.success("Added resource successfully");
-    } else {
-      toast.error("Failed to add resource");
+      return setIsLoading(false);
     }
+    toast.error("Failed to add resource");
+    setIsLoading(false);
   };
 
   const handleChange = (e: React.FormEvent<HTMLInputElement> | any) => {
@@ -66,6 +70,8 @@ export default function AddResource() {
   const handleCitiesChange = (e: React.FormEvent<HTMLInputElement> | any) => {
     setCities((prev) => ({ ...prev, [e.target.name as any]: +e.target.value }));
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <section className="flex items-center justify-center h-screen">

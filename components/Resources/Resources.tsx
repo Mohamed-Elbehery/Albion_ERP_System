@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import Loading from "../Loading/Loading";
 
 export default function Resources() {
   const [data, setData] = useState<{
@@ -17,8 +18,11 @@ export default function Resources() {
   const [quantity, setQuantity] = useState<number | null>(null);
   const [calculate, setCalculate] = useState(false);
   const [itemCalculattion, setItemCalculattion] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleDelete = async (id: string) => {
+    setIsLoading(true);
+
     const res = await fetch(
       process.env.NODE_ENV === "development"
         ? `http://localhost:3000/api/delete-item/${id}`
@@ -31,12 +35,13 @@ export default function Resources() {
     if (res.ok) {
       getAllItems();
       toast.success("Deleted resource successfully");
-    } else {
-      toast.success("Failed to deleted resource");
     }
+    toast.success("Failed to deleted resource");
+    setIsLoading(false);
   };
 
   const getAllItems = async () => {
+    setIsLoading(true);
     const res = await fetch(
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000/api/items"
@@ -48,11 +53,14 @@ export default function Resources() {
     const data = await res.json();
 
     setData(data);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     getAllItems();
   }, []);
+
+  if (isLoading) return <Loading />;
 
   return (
     <>
@@ -96,7 +104,9 @@ export default function Resources() {
               >
                 Cancel
               </button>
-              {quantity! > 0 && <p className="text-base">{itemCalculattion * quantity!}</p>}
+              {quantity! > 0 && (
+                <p className="text-base">{itemCalculattion * quantity!}</p>
+              )}
               <input
                 className="text-sm rounded-md p-2 text-black"
                 placeholder="Quantity..."
