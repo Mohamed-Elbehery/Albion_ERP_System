@@ -9,7 +9,7 @@ export default function Home() {
       title: "Resources",
       value: "resources",
       content: (
-        <div className="w-full overflow-auto relative h-auto rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#1aa2ba] to-[#395d7b] !z-[9999999]">
+        <div className="w-full relative h-auto rounded-2xl p-10 px-5 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-[#1aa2ba] to-[#395d7b] !z-[9999999]">
           <Resources/>
         </div>
       ),

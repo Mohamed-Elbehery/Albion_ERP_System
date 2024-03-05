@@ -8,7 +8,7 @@ const ItemSchema = new mongoose.Schema(
     },
     enchantment: {
       type: String,
-      enum: [1, 2, 3, 4],
+      enum: [0, 1, 2, 3, 4],
       required: true,
     },
     tier: {

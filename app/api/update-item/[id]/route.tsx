@@ -1,8 +1,11 @@
 import connectDB from "@/lib/db";
 import Item from "@/models/item";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const { name, enchantment, tier, cities } = await req.json();
 
@@ -11,13 +14,15 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
-
-    const item = await Item.create({
-      name,
-      enchantment,
-      tier,
-      cities,
-    });
+    const item = await Item.updateOne(
+      { _id: params.id },
+      {
+        name,
+        enchantment,
+        tier,
+        cities,
+      }
+    );
     return NextResponse.json({ item });
   } catch (error) {
     return NextResponse.json({ error }, { status: 400 });

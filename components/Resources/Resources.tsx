@@ -3,8 +3,10 @@
 import { cities } from "@/constants/cities";
 import { Item, Price } from "@/types/item";
 import { colors } from "@/constants/colors";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import toast from "react-hot-toast";
 
 export default function Resources() {
   const [data, setData] = useState<{
@@ -12,12 +14,38 @@ export default function Resources() {
     lowestPrices: Price[];
   } | null>(null);
   const [query, setQuery] = useState("");
+  const [quantity, setQuantity] = useState<number | null>(null);
+  const [calculate, setCalculate] = useState(false);
+  const [itemCalculattion, setItemCalculattion] = useState<number>(0);
+
+  const handleDelete = async (id: string) => {
+    const res = await fetch(
+      process.env.NODE_ENV === "development"
+        ? `http://localhost:3000/api/delete-item/${id}`
+        : `https://albion-erp-system.vercel.app/api/delete-item/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (res.ok) {
+      toast.success("Deleted resource successfully");
+      getAllItems();
+    } else {
+      toast.success("Failed to deleted resource");
+    }
+  };
 
   const getAllItems = async () => {
-    const res = await fetch(process.env.NODE_ENV === "development" ? "http://localhost:3000/api/items" : "https://albion-erp-system.vercel.app/api/items", {
-      cache: "no-cache",
-    });
-    const data = await res.json();    
+    const res = await fetch(
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/api/items"
+        : "https://albion-erp-system.vercel.app/api/items",
+      {
+        cache: "no-cache",
+      }
+    );
+    const data = await res.json();
 
     setData(data);
   };
@@ -27,62 +55,76 @@ export default function Resources() {
   }, []);
 
   return (
-    <section className="overflow-auto min-h-screen">
-      <div className="flex items-center justify-between w-[1175px]">
-        <h1>
-          Resources{" "}
-          <span className="text-base">
-            (
-            {
-              data?.items?.filter(
-                (item: Item) =>
-                  item.name.toLowerCase().includes(query.toLowerCase()) &&
-                  item.cities.length > 0
-              ).length
-            }
-            )
-          </span>
-        </h1>
-        <Link
-          href="addResource"
-          className="text-base inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-50"
-        >
-          Add Resource
-        </Link>
-      </div>
-      <div className="mx-auto w-fit">
-        <input
-          className="text-base rounded-md p-2 text-black"
-          placeholder="Search..."
-          type="text"
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
-      {/* Head */}
-      <table className="m-2 mt-6">
-        <thead>
-          <tr className="divide-x-2 space-x-7">
-            <th className={`min-w-[130px] text-base p-2 bg-gray-700`}>
-              Resources
-            </th>
-            {cities.map((city) => (
-              <th
-                style={{ color: city.textColor, backgroundColor: city.color }}
-                key={city.name}
-                className={`min-w-[130px] text-base p-2`}
+    <>
+      <section className="overflow-auto min-h-screen">
+        <div className="flex items-center justify-between w-[1175px] pt-2">
+          <h1>
+            Resources{" "}
+            <span className="text-sm">
+              (
+              {
+                data?.items?.filter(
+                  (item: Item) =>
+                    item.name.toLowerCase().includes(query.toLowerCase()) &&
+                    item.cities.length > 0
+                ).length
+              }
+              )
+            </span>
+          </h1>
+          <Link
+            href="addResource"
+            className="text-sm inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-50"
+          >
+            Add Resource
+          </Link>
+        </div>
+        <div className="mx-auto w-fit">
+          {!calculate ? (
+            <input
+              className="text-sm rounded-md p-2 text-black"
+              placeholder="Search By Item Name..."
+              type="text"
+              onChange={(e) => setQuery(e.target.value)}
+              value={query!}
+            />
+          ) : (
+            <div className="flex items-center gap-x-3">
+              <button
+                onClick={() => setCalculate(false)}
+                className="text-sm inline-flex h-9 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-50"
               >
-                {city.name}
-              </th>
-            ))}
-            <th className={`min-w-[130px] text-base p-2 bg-gray-700`}>
-              Recommended
-            </th>
-          </tr>
-        </thead>
-      </table>
-      {/* Body */}
-      <table className="m-2 mt-6">
-        <tbody className="divide-y-2">
+                Cancel
+              </button>
+              {quantity! > 0 && <p className="text-base">{itemCalculattion * quantity!}</p>}
+              <input
+                className="text-sm rounded-md p-2 text-black"
+                placeholder="Quantity..."
+                type="number"
+                value={quantity!}
+                onChange={(e) =>
+                  setQuantity(+e.target.value === 0 ? null : +e.target.value)
+                }
+              />
+            </div>
+          )}
+        </div>
+        {/* Headers */}
+        <div className="grid grid-cols-10 m-2 mt-6 w-full">
+          <h4 className="text-sm p-2 bg-gray-700 text-center">Resources</h4>
+          {cities.map((city) => (
+            <h4
+              style={{ color: city.textColor, backgroundColor: city.color }}
+              key={city.name}
+              className={`text-sm p-2 text-center`}
+            >
+              {city.name}
+            </h4>
+          ))}
+          <h4 className={`text-sm p-2 bg-gray-700 text-center`}>Recommended</h4>
+        </div>
+        {/* Data */}
+        <div className="m-2 mt-6 w-full">
           {data?.items
             ?.filter(
               (item: Item) =>
@@ -90,39 +132,36 @@ export default function Resources() {
                 item.cities.length > 0
             )
             ?.map((item: Item, idx: number) => (
-              <tr
-                key={`${item.name} ${item.tier}`}
-                className="divide-x-2 space-x-7"
-              >
-                <td
-                  className={`min-w-[130px] text-base p-2 py-3 text-center bg-gray-500 space-x-1 relative`}
+              <div className="grid grid-cols-10" key={item._id}>
+                <h4
+                  className={`text-sm p-2 py-3 text-center bg-gray-500 space-x-1 relative border-r border-t flex items-center justify-center gap-x-2`}
                 >
                   <span>{item.tier}</span> {item.name}
                   {/* Enchant circle */}
                   <div
                     style={{
-                      backgroundColor: colors[item.enchantment - 1].bgColor,
-                      color: colors[item.enchantment - 1].textColor,
+                      backgroundColor: colors[item.enchantment]?.bgColor,
+                      color: colors[item.enchantment]?.textColor,
                     }}
                     className="absolute top-[-12px] right-[-12px] size-6 rounded-full flex items-center justify-center"
                   >
                     {item.enchantment}
                   </div>
-                </td>
+                </h4>
                 {item.cities.map((city) => (
-                  <td
+                  <h4
                     key={city.name}
-                    className={`min-w-[130px] text-base p-2 py-4 text-center bg-gray-500`}
+                    className={`text-sm p-2 py-4 text-center bg-gray-500 border-r border-t`}
                   >
                     {city.price}
-                  </td>
+                  </h4>
                 ))}
-                <td
-                  className={`min-w-[130px] text-base p-2 py-4 text-center bg-gray-500 relative`}
+                <h4
+                  className={`group relative text-sm p-2 py-4 text-center bg-gray-500 border-t cursor-default hover:overflow-hidden`}
                 >
                   {data?.lowestPrices[idx].city}
                   {/* Star */}
-                  <div className="absolute -top-[11px] -right-[12px] text-yellow-400">
+                  <div className="group-hover:hidden absolute -top-[11px] -right-[12px] text-yellow-400">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -136,11 +175,52 @@ export default function Resources() {
                       />
                     </svg>
                   </div>
-                </td>
-              </tr>
+                  <div className="absolute bg-white inset-0 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-x-2">
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      title="Delete"
+                    >
+                      <Image
+                        src={
+                          "https://cdn-icons-png.flaticon.com/128/6861/6861362.png"
+                        }
+                        width={24}
+                        height={24}
+                        alt="Trash / Delete Icon"
+                      />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCalculate(true);
+                        setItemCalculattion(data?.lowestPrices[idx].price);
+                      }}
+                      title="Calculate"
+                    >
+                      <Image
+                        src={
+                          "https://cdn-icons-png.flaticon.com/128/548/548353.png"
+                        }
+                        width={24}
+                        height={24}
+                        alt="Calculate Icon"
+                      />
+                    </button>
+                    <Link href={`/editResource/${item._id}`} title="Edit">
+                      <Image
+                        src={
+                          "https://cdn-icons-png.flaticon.com/128/1828/1828270.png"
+                        }
+                        width={24}
+                        height={24}
+                        alt="Edit Icon"
+                      />
+                    </Link>
+                  </div>
+                </h4>
+              </div>
             ))}
-        </tbody>
-      </table>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

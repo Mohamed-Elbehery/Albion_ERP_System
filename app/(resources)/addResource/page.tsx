@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const DEFAULT_RESOURCE = {
   name: "",
@@ -31,19 +32,27 @@ export default function AddResource() {
       price: parseInt(price as string),
     }));
 
-    const item = { ...resource, cities:itemCities };
+    const item = { ...resource, cities: itemCities };
 
-    const res = await fetch(process.env.NODE_ENV === "development" ? "http://localhost:3000/api/create-item" : "https://albion-erp-system.vercel.app/api/create-item", {
-      method: "POST",
-      body: JSON.stringify(item),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
+    const res = await fetch(
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/api/create-item"
+        : "https://albion-erp-system.vercel.app/api/create-item",
+      {
+        method: "POST",
+        body: JSON.stringify(item),
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
 
     if (res.ok) {
       setResource(() => DEFAULT_RESOURCE);
       setCities(() => DEFAULT_CITIES);
+      toast.success("Added resource successfully");
+    } else {
+      toast.error("Failed to add resource");
     }
   };
 
@@ -95,6 +104,7 @@ export default function AddResource() {
               <option value="" disabled>
                 Select Item Enchantment
               </option>
+              <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
