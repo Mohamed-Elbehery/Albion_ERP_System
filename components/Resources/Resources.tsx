@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import Loading from "../Loading/Loading";
+import { formatPrice } from "@/utils/formatPrice";
 
 export default function Resources() {
   const [data, setData] = useState<{
@@ -68,7 +69,7 @@ export default function Resources() {
   return (
     <>
       <section className="overflow-auto min-h-screen">
-        <div className="flex items-center justify-between w-[1175px] pt-2">
+        <div className="flex items-center justify-between max-w-[1175px] pt-2">
           <h1>
             Resources{" "}
             <span className="text-sm">
@@ -83,9 +84,10 @@ export default function Resources() {
               )
             </span>
           </h1>
+
           <Link
             href="addResource"
-            className="text-sm inline-flex h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-50"
+            className="text-sm inline-flex items-center justify-center h-12 animate-shimmer rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 focus:ring-offset-slate-50"
           >
             Add Resource
           </Link>
@@ -109,7 +111,7 @@ export default function Resources() {
               </button>
               {quantity! > 0 && (
                 <p className="text-base">
-                  {(total * (tax! / 100)) + total}
+                  {formatPrice(total * (tax! / 100) + total)} silver
                 </p>
               )}
               <input
