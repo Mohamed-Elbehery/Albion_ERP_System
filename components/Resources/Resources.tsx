@@ -14,16 +14,12 @@ import AddItem from "../AddItem/AddItem";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "../ui/input";
 import NO_DATA from "@/assets/no_data.svg";
-import {
-  TextRevealCard,
-  TextRevealCardDescription,
-  TextRevealCardTitle,
-} from "../ui/text-reveal-card";
+import { TextRevealCard } from "../ui/text-reveal-card";
 
 export default function Resources() {
   const [data, setData] = useState<{
     data: Category[];
-    lowestPrices: { city: string; price: number }[];
+    lowestPrices: { city: string; price: number; itemId: string }[];
   } | null>(null);
   const [query, setQuery] = useState("");
   const [quantity, setQuantity] = useState<number | null>(null);
@@ -387,7 +383,11 @@ export default function Resources() {
                           <h4
                             className={`group relative text-sm p-2 py-4 text-center bg-gray-500 border-t cursor-default hover:overflow-hidden`}
                           >
-                            {data?.lowestPrices[idx].city}
+                            {
+                              data?.lowestPrices?.find(
+                                (low) => low.itemId == item._id
+                              )?.city
+                            }
                             <div className="group-hover:hidden absolute -top-[11px] -right-[12px] text-yellow-400">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -420,9 +420,20 @@ export default function Resources() {
                               </button>
                               <button
                                 onClick={() => {
+                                  console.log(
+                                    data?.lowestPrices?.find((low) => {
+                                      console.log(low.itemId);
+
+                                      return low.itemId == item._id;
+                                    })
+                                  );
+
                                   setCalculate(true);
                                   setItemCalculattion(
-                                    data?.lowestPrices[idx].price
+                                    data?.lowestPrices?.find(
+                                      (low) =>
+                                        low.itemId == item._id
+                                    )?.price ?? 0
                                   );
                                 }}
                                 title="Calculate"

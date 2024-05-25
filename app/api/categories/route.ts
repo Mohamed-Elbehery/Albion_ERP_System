@@ -28,6 +28,7 @@ export async function GET() {
             item: item?.name ?? "",
             city: lowestPriceCity?.name ?? "",
             price: lowestPriceCity?.price ?? 0,
+            itemId: item?._id.toString() ?? "",
           });
         }
       });
