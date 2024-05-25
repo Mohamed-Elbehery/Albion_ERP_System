@@ -72,9 +72,7 @@ export default function Resources() {
     const item = { cities: itemCities };
 
     const res = await fetch(
-      process.env.NODE_ENV === "development"
-        ? `http://localhost:3000/api/update-item?categoryId=${updateCategoryID}&itemId=${mode}`
-        : `https://albion-erp-system.vercel.app/api/update-item?categoryId=${updateCategoryID}&itemId=${mode}`,
+      "api/update-item?categoryId=${updateCategoryID}&itemId=${mode}",
       {
         method: "PATCH",
         body: JSON.stringify(item),
@@ -103,14 +101,9 @@ export default function Resources() {
   const getAllCategories = async () => {
     setIsLoading(true);
 
-    const res = await fetch(
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000/api/categories"
-        : "https://albion-erp-system.vercel.app/api/categories",
-      {
-        cache: "no-cache",
-      }
-    );
+    const res = await fetch("api/categories", {
+      cache: "no-cache",
+    });
 
     const data = await res.json();
 
@@ -195,10 +188,7 @@ export default function Resources() {
 
             <h3 className="text-4xl mb-3 mt-6 flex items-center gap-x-2">
               There&apos;s No Data to Display{" "}
-              <TextRevealCard
-                text="My Friend"
-                revealText="My Homie"
-              />
+              <TextRevealCard text="My Friend" revealText="My Homie" />
             </h3>
 
             <p className="text-[16px]">
@@ -247,7 +237,7 @@ export default function Resources() {
                   onClick={async () => {
                     setIsLoading(true);
                     const res = await fetch(
-                      `/api/delete-category?categoryId=${cat._id.toString()}`,
+                      `api/delete-category?categoryId=${cat._id.toString()}`,
                       {
                         method: "DELETE",
                       }

@@ -55,20 +55,13 @@ export default function AddItem({
             ],
     };
 
-    const res = await fetch(
-      `${
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000/api/create-item"
-          : "https://albion-erp-system.vercel.app/api/create-item"
-      }`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...item, categoryId }),
-      }
-    );
+    const res = await fetch("api/create-item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...item, categoryId }),
+    });
 
     const finalData = await res.json();
 

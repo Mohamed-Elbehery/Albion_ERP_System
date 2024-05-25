@@ -18,20 +18,13 @@ export default function AddCategory({
   });
 
   const onSubmit = async (data: Category) => {
-    const res = await fetch(
-      `${
-        process.env.NODE_ENV === "development"
-          ? "http://localhost:3000/api/create-category"
-          : "https://albion-erp-system.vercel.app/api/create-category"
-      }`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await fetch("api/create-category", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
     const finalData = await res.json();
 
