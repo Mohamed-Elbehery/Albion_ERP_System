@@ -98,6 +98,24 @@ export default function Resources() {
     setIsLoading(false);
   };
 
+  // Function to sort items by tier
+  const sortByTier = (a: Item, b: Item) => {
+    const tierOrder = ["T3", "T4", "T5", "T6", "T7", "T8"];
+    const tierA = tierOrder.indexOf(a.tier);
+    const tierB = tierOrder.indexOf(b.tier);
+    return tierA - tierB;
+  };
+
+  // Function to filter and sort items by enchantment level
+  const sortAndFilterByEnchantment = (
+    items: Item[],
+    enchantmentLevel: number
+  ) => {
+    return items
+      .filter((item) => item.enchantment === enchantmentLevel)
+      .sort(sortByTier);
+  };
+
   const getAllCategories = async () => {
     setIsLoading(true);
 
@@ -291,7 +309,13 @@ export default function Resources() {
 
                 {/* Data */}
                 <div className="m-2 mt-6 w-full">
-                  {cat?.items
+                  {[
+                    ...sortAndFilterByEnchantment(cat.items, 0),
+                    ...sortAndFilterByEnchantment(cat.items, 1),
+                    ...sortAndFilterByEnchantment(cat.items, 2),
+                    ...sortAndFilterByEnchantment(cat.items, 3),
+                    ...sortAndFilterByEnchantment(cat.items, 4),
+                  ]
                     ?.filter(
                       (item: Item) =>
                         item.name.toLowerCase().includes(query.toLowerCase()) &&
