@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const ItemSchema = new mongoose.Schema(
+export const ItemSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
     },
     enchantment: {
-      type: String,
+      type: Number,
       enum: [0, 1, 2, 3, 4],
       required: true,
     },
@@ -24,10 +24,14 @@ const ItemSchema = new mongoose.Schema(
         },
         price: {
           type: Number,
-          required: true,
+          default: 0,
         },
       },
     ],
+    categoryId: {
+      type: mongoose.Schema.ObjectId,
+      required: true,
+    },
   },
   {
     timestamps: true,

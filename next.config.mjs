@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["cdn-icons-png.flaticon.com"],
+    remotePatterns: [
+      {
+        hostname: "cdn-icons-png.flaticon.com",
+      },
+    ],
   },
 };
 
